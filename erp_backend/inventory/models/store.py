@@ -1,23 +1,16 @@
 from django.db import models
-
+from django.conf import settings
 
 class Store(models.Model):
-    """
-    Represents a physical or logical store where items are stored..
-    """
-
-    name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    #who is responsible for the store
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
     custodian = models.ForeignKey(
-        "auth.User",
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="stores_in_charge"
+        related_name="custodian_stores"
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -1,15 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class Role(models.Model):
+class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 
-class Department(models.Model):
-    name = models.CharField(max_length=120, unique=True)
+class Role(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -20,4 +20,4 @@ class User(AbstractUser):
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return self.username

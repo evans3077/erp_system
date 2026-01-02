@@ -6,25 +6,31 @@ from .item import Item
 User = get_user_model()
 
 class StockMovement(models.Model):
-    MOVEMENT_TYPES = (
-        ("ADD", "Add Stock"),
-        ("REMOVE", "Remove Stock"),
-        ("TRANSFER", "Transfer Stock"),
-        ("ADJUST", "Adjust Stock"),  # Manual corrections
+    # Used when stock is taken from a store
+    source_store = models.ForeignKey(
+        Store,
+        related_name="outgoing_movements",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
-    movement_type = models.CharField(max_length=10, choices=MOVEMENT_TYPES)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="movements")
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="movements")
+    # Used when stock is delivered to a store
+    destination_store = models.ForeignKey(
+        Store,
+        related_name="incoming_movements",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
-    # For transfers
-    source_store = models.ForeignKey(Store, on_delete=models.SET_NULL, null=True, blank=True, related_name="outgoing_transfers")
-    destination_store = models.ForeignKey(Store, on_delete=models.SET_NULL, null=True, blank=True, related_name="incoming_transfers")
+   
+    store = models.ForeignKey(
+        Store,
+        related_name="general_movements",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
-    quantity = models.IntegerField()
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    note = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.movement_type} - {self.item.name} ({self.quantity})"
+   
